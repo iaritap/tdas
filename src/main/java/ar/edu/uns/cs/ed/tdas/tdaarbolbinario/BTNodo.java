@@ -20,12 +20,6 @@ public class BTNodo<E> implements Position<E> {
         return elem;
     }
 
-
-    public E getElem() {
-        return elem;
-    }
-
-
     public void setElem(E elem) {
         this.elem = elem;
     }
