@@ -6,7 +6,7 @@ import ar.edu.uns.cs.ed.tdas.tdalista.PositionList;
 
 public class Vertice<V,E> implements Vertex<V> {
     protected V element;
-	protected Position<Vertice<V, E>> posicion;
+	protected Position<Vertex<V>> posicion;
 	protected PositionList<Edge<E>> listaAdyacencia;
 
     public Vertice( V elemento ) {
@@ -22,11 +22,15 @@ public class Vertice<V,E> implements Vertex<V> {
         element= e;
     }
 
-    public void setPositionInLista(Position<Vertice<V, E>> last){
+    public void setPositionInLista(Position<Vertex<V>> last){
 		posicion = last;
 	}
 
     public void agregarAdyacente(Arco<E, V> arco) {
 		listaAdyacencia.addLast(arco);
 	}
+
+    public PositionList<Edge<E>> getArcosAdyacentes(){
+        return listaAdyacencia;
+    }
 }

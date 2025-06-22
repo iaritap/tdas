@@ -36,33 +36,53 @@ public class GrafoListaAdyacente<V,E> implements Graph<V,E> {
 
     public Vertex<V> opposite(Vertex<V> v, Edge<E> e) {
         Vertice<V,E> n = checkVertex(v);
-
+        Arco<E,V> a= checkEdge(e);
+        Vertex<V> result= null;
+        if(a.getAdyacente1()== n){
+            result= a.getAdyacente2();
+        }
+        if(a.getAdyacente2()== n){
+            result = a.getAdyacente1();
+        }
         return null;
 
     }
 
-    @Override
     public Vertex<V>[] endvertices(Edge<E> e) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'endvertices'");
+        Arco<E,V> a= checkEdge(e);
+        Vertex<V>[] arreglode2= (Vertex<V>[])new Vertex[2];
+        arreglode2[0]= a.getAdyacente1();
+        arreglode2[1]= a.getAdyacente2();
+
+        return arreglode2;
     }
 
-    @Override
     public boolean areAdjacent(Vertex<V> v, Vertex<V> w) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'areAdjacent'");
+        Vertice<V,E> v1= checkVertex(v);
+        Vertice<V,E> v2= checkVertex(w);
+        boolean result= false;
+        for(Edge<E> e: v1.getArcosAdyacentes()){
+            for(Edge<E> e2: v2.getArcosAdyacentes()){
+                if(e==e2){
+                    result=true;
+                }
+            }
+        }
+        return result;
     }
 
-    @Override
     public V replace(Vertex<V> v, V x) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'replace'");
+        Vertice<V,E> v1= checkVertex(v);
+        V rotuloviejo= v1.element();
+        v1.setRotulo(x);
+        return rotuloviejo;
     }
 
-    @Override
     public Vertex<V> insertVertex(V x) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'insertVertex'");
+        Vertice<V,E> nuevo= new Vertice<V,E>(x);
+        listaDeVertices.addLast(nuevo);
+        nuevo.setPositionInLista(listaDeVertices.last());
+        return nuevo;
     }
 
     @Override
