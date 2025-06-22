@@ -1,35 +1,32 @@
 package ar.edu.uns.cs.ed.tdas.tdagrafo;
 
-import java.util.Iterator;
-
 import ar.edu.uns.cs.ed.tdas.Position;
 import ar.edu.uns.cs.ed.tdas.tdalista.ListaDoblementeEnlazada;
 import ar.edu.uns.cs.ed.tdas.tdalista.PositionList;
 
-public class Vertice<V> implements Vertex<V> {
-    protected V elem;
-    protected PositionList<Edge<V>> listaArcosIncidentes;
-    public Vertice(V e){
-        listaArcosIncidentes = new ListaDoblementeEnlazada<>();
-        elem=e;
-    }
+public class Vertice<V,E> implements Vertex<V> {
+    protected V element;
+	protected Position<Vertice<V, E>> posicion;
+	protected PositionList<Edge<E>> listaAdyacencia;
+
+    public Vertice( V elemento ) {
+		element = elemento;
+	    listaAdyacencia = new ListaDoblementeEnlazada<Edge<E>>();
+	}
 
     public V element() {
-        return elem;
+        return element;
     }
 
-    public void setElem(V e){
-        elem= e;
+    public void setRotulo(V e){
+        element= e;
     }
 
-    public void setArcoincidente(Edge<V> a){
-        if(a!= null){
-            listaArcosIncidentes.addLast(a);
-        }
-    }
+    public void setPositionInLista(Position<Vertice<V, E>> last){
+		posicion = last;
+	}
 
-    public PositionList<Edge<V>> getArcosIncidentes(){
-        return listaArcosIncidentes;
-    } 
-
+    public void agregarAdyacente(Arco<E, V> arco) {
+		listaAdyacencia.addLast(arco);
+	}
 }
