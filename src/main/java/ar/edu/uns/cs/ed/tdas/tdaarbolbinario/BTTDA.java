@@ -65,8 +65,8 @@ public class BTTDA<E> implements BinaryTree<E> {
     @Override
     public Position<E> parent(Position<E> v) {
         BTNodo<E> p = checkPosition(v);
-        if(p.getPadre()== null){
-            throw new InvalidOperationException("se intento hacer padre a una raiz");
+        if(isRoot(p)){
+            throw new BoundaryViolationException("se intento hacer padre a una raiz");
         }
         else{
             return p.getPadre();
