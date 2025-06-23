@@ -26,6 +26,10 @@ public class Vertice<V,E> implements Vertex<V> {
 		posicion = last;
 	}
 
+    public Position<Vertex<V>> getPositionInLista(){
+		return posicion;
+	}
+
     public void agregarAdyacente(Arco<E, V> arco) {
 		listaAdyacencia.addLast(arco);
 	}

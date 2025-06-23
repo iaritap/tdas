@@ -6,7 +6,7 @@ import ar.edu.uns.cs.ed.tdas.tdalista.PositionList;
 
 public class Arco<E,V> implements Edge<E> {
     protected E element;
-	protected Position<Arco<E,V>> posicion;
+	protected Position<Edge<E>> posicion;
 	protected Vertice<V, E> adyacente1;
 	protected Vertice<V, E> adyacente2;
 
@@ -26,12 +26,12 @@ public class Arco<E,V> implements Edge<E> {
         return element;
     } 
 
-    public void setPositionInLista(Position<Arco<E, V>> last) {
+    public void setPositionInLista(Position<Edge<E>> last) {
 		posicion = last;
 		
 	}
 
-    public Position<Arco<E, V>> gePosisionLista(){
+    public Position<Edge<E>> getPosisionLista(){
         return posicion;
     }
 

@@ -1,15 +1,16 @@
 package ar.edu.uns.cs.ed.tdas.tdagrafo;
 
+import ar.edu.uns.cs.ed.tdas.Position;
 import ar.edu.uns.cs.ed.tdas.excepciones.InvalidPositionException;
 import ar.edu.uns.cs.ed.tdas.tdalista.ListaDoblementeEnlazada;
 import ar.edu.uns.cs.ed.tdas.tdalista.PositionList;
 
-public class GrafoListaAdyacente<V,E> implements Graph<V,E> {
+public class GrafoNDListaAdyacente<V,E> implements Graph<V,E> {
 
     protected PositionList<Vertex<V>> listaDeVertices;
     protected PositionList<Edge<E>> listaDeArcos;
 
-    public GrafoListaAdyacente(){
+    public GrafoNDListaAdyacente(){
         listaDeVertices= new ListaDoblementeEnlazada<>();
         listaDeArcos= new ListaDoblementeEnlazada<>();
     }
@@ -85,22 +86,55 @@ public class GrafoListaAdyacente<V,E> implements Graph<V,E> {
         return nuevo;
     }
 
-    @Override
     public Edge<E> insertEdge(Vertex<V> v, Vertex<V> w, E e) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'insertEdge'");
+        Vertice<V,E> v1= checkVertex(v);
+        Vertice<V,E> v2= checkVertex(w);
+        Arco<E,V> anuevo= new Arco<>(e, v1, v2);
+        listaDeArcos.addLast(anuevo);
+        anuevo.setPositionInLista(listaDeArcos.last());
+        v1.agregarAdyacente(anuevo);
+        v2.agregarAdyacente(anuevo);
+
+        return anuevo;
     }
 
-    @Override
     public V removeVertex(Vertex<V> v) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeVertex'");
+        Vertice<V,E> v1= checkVertex(v);
+        V e= v1.element();
+        listaDeVertices.remove(v1.getPositionInLista());
+        for(Position<Edge<E>> posEdge : listaDeArcos.positions()){
+            for(Edge<E> edge2 : v1.getArcosAdyacentes()){
+                if(posEdge.element()==edge2){
+                    listaDeArcos.remove(posEdge);
+                }
+            }
+        }
+        return e;
     }
 
-    @Override
     public E removeEdge(Edge<E> e) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeEdge'");
+        Arco<E,V> a= checkEdge(e);
+        E elem= a.element();
+        Vertice<V,E> v1= a.getAdyacente1();
+        Vertice<V,E> v2= a.getAdyacente2();
+        for(Position<Edge<E>> posEdge : listaDeArcos.positions()){
+            if(posEdge.element()==a){
+                listaDeArcos.remove(posEdge);
+            }
+        }
+        for(Position<Edge<E>> posEdge : v1.getArcosAdyacentes().positions()){
+            if(posEdge.element()==a){
+                v1.getArcosAdyacentes().remove(posEdge);
+            }
+        }
+
+        for(Position<Edge<E>> posEdge : v2.getArcosAdyacentes().positions()){
+            if(posEdge.element()==a){
+                v2.getArcosAdyacentes().remove(posEdge);
+            }
+        }
+        return elem;
+
     }
     
     //metodos privados
