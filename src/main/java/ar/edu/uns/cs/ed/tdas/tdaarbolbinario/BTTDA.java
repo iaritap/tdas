@@ -12,14 +12,14 @@ import ar.edu.uns.cs.ed.tdas.tdaarbol.TreeNodo;
 import ar.edu.uns.cs.ed.tdas.tdalista.ListaDoblementeEnlazada;
 import ar.edu.uns.cs.ed.tdas.tdalista.PositionList;
 
-public class BTTDA<E> implements Tree<E>,BinaryTree<E> {
+public class BTTDA<E> implements BinaryTree<E> {
 
     protected int size;
     BTNodo<E> root;
 
-    public BTTDA(BTNodo<E> r){
+    public BTTDA(){
         size=0;
-        root=r;
+        root=null;
     }
 
     public int size() {
@@ -77,8 +77,10 @@ public class BTTDA<E> implements Tree<E>,BinaryTree<E> {
     public Iterable<Position<E>> children(Position<E> v) {
         BTNodo<E> nodo = checkPosition(v);
 		PositionList<Position<E>> resultado = new ListaDoblementeEnlazada<Position<E>>();
-		resultado.addLast(nodo.getHijoDere());
-        resultado.addLast(nodo.getHijoIzq());
+        if(nodo.getHijoIzq()!= null)
+            resultado.addLast(nodo.getHijoIzq());
+        if(nodo.getHijoDere()!= null)
+		    resultado.addLast(nodo.getHijoDere());
  		return resultado;
     }
 
@@ -111,7 +113,7 @@ public class BTTDA<E> implements Tree<E>,BinaryTree<E> {
         }
         else{
             size++;
-            root = new BTNodo(e, null, null, null);//ver
+            root = new BTNodo<>(e, null, null, null);//ver
         }
     }
 
@@ -168,23 +170,25 @@ public class BTTDA<E> implements Tree<E>,BinaryTree<E> {
 
     public void removeExternalNode(Position<E> p) {
         BTNodo<E> n= checkPosition(p);
-        if(n.getHijoDere()==null && n.getHijoIzq()== null){
+        if(isExternal(n)){
             if(n.getPadre().getHijoDere()== n){
                 n.getPadre().setHijoDere(null);
             }
             if(n.getPadre().getHijoIzq()==n){
                 n.getPadre().setHijoIzq(null);
             }
+            size--;
         }
     }
 
     public void removeInternalNode(Position<E> p) {
         BTNodo<E> n= checkPosition(p);
-        if(n.getHijoDere()!=null || n.getHijoIzq()!= null){
+        if(isInternal(n)){
             if(n.getPadre().getHijoDere()== n){
                 n.getPadre().setHijoDere(null);
                 if(n.getHijoDere()== null){
                     n.getPadre().setHijoDere(n.getHijoIzq());
+                    n.getHijoIzq().setPadre(n.getPadre());
                 }
                 else{
                     if(n.getHijoIzq().getHijoDere()== null && n.getHijoIzq().getHijoIzq()!= null){
@@ -308,7 +312,7 @@ public class BTTDA<E> implements Tree<E>,BinaryTree<E> {
         if(isEmpty()){
             throw new InvalidPositionException("se intento hacer addright con arbol vacio");
         }
-        if(n.getHijoIzq()!=null){
+        if(n.getHijoDere()!=null){
             throw new InvalidOperationException("se intento hacer addright y v ya tenia hijo dere");
         }
         else{
@@ -322,17 +326,22 @@ public class BTTDA<E> implements Tree<E>,BinaryTree<E> {
     public void attach(Position<E> r, BinaryTree<E> T1, BinaryTree<E> T2) {
         BTNodo<E> n= checkPosition(r);
         if( isEmpty() ){
-            throw new InvalidOperationException("se intento hacer attach con arbol vacio")
+            throw new InvalidOperationException("se intento hacer attach con arbol vacio");
         }
-        if( n.getHijoDere()!=null && n.getHijoIzq()!=null ){
-            throw new InvalidOperationException("se intento hacer attach con V que no es hoja")
+        if( isInternal(n) ){
+            throw new InvalidPositionException("se intento hacer attach con V que no es hoja");
         }
         else{
-            BTNodo<E> raizT1 =(BTNodo<E>) T1.root();
-            BTNodo<E> raizT2 =(BTNodo<E>) T2.root();
-            n.setHijoIzq(raizT1);
-            n.setHijoIzq(raizT2);
-            size+= T1.size() + T2.size();
+            if(!T1.isEmpty()){
+                BTNodo<E> raizT1 =(BTNodo<E>) T1.root();
+                n.setHijoIzq(raizT1);
+                size+= T1.size();
+            }
+            if(!T2.isEmpty()){
+                BTNodo<E> raizT2 =(BTNodo<E>) T2.root();
+                n.setHijoIzq(raizT2);
+                size+= T2.size();
+            }
         }
     }
 

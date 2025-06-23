@@ -1,45 +1,42 @@
 package ar.edu.uns.cs.ed.tdas.tdalista;
+import java.util.Iterator;
 
 import ar.edu.uns.cs.ed.tdas.Position;
+import ar.edu.uns.cs.ed.tdas.excepciones.BoundaryViolationException;
 
-public class DNode<E> implements Position<E>{
-    protected E elemento;
-    protected DNode<E> next;
-    protected DNode<E> before;
+public class IteradorListaDC<E> implements Iterator<E> {
 
-    public DNode(E elem){
-        elemento = elem;
-        before = null;
-        next = null;
+    protected PositionList<E> lista;
+    protected Position<E> cursor;
+
+    public IteradorListaDC(PositionList<E> list){
+        lista= list;
+        if(!lista.isEmpty()){
+            cursor = list.first();
+        }
+        else{
+            cursor= null;
+        }
     }
 
-    public DNode(E elem, DNode<E> bef, DNode<E> ne){
-        elemento = elem;
-        before = bef;
-        next = ne;
+    
+    public boolean hasNext() {
+        return cursor!=null;
     }
-	
-	public void setElemento( E _elemento ) {
-		elemento = _elemento;
-	}
-	
-	public DNode<E> getSiguiente() {
-		return next;
-	}
-	
-	public void setSiguiente( DNode<E> _next ) {
-		next = _next;
-	}
 
-	public void setAnterior( DNode<E> _anterior){
-		before= _anterior;
-	}
-	public DNode<E> getAnterior(){
-		return before;
-	}
-
-    public E element() {
-        return elemento;
+    public E next() {
+        if(cursor== null){
+            throw new BoundaryViolationException("no hay siguiente elem en iterador");
+        }
+        E elem= cursor.element();
+        if(cursor == lista.last()){
+            cursor= null;
+        }
+        else{
+            cursor= lista.next(cursor);
+        }
+        
+        return elem;
     }
     
 }

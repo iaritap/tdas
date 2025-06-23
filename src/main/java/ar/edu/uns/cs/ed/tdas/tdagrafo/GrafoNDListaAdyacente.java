@@ -1,7 +1,9 @@
 package ar.edu.uns.cs.ed.tdas.tdagrafo;
 
 import ar.edu.uns.cs.ed.tdas.Position;
+import ar.edu.uns.cs.ed.tdas.excepciones.InvalidEdgeException;
 import ar.edu.uns.cs.ed.tdas.excepciones.InvalidPositionException;
+import ar.edu.uns.cs.ed.tdas.excepciones.InvalidVertexException;
 import ar.edu.uns.cs.ed.tdas.tdalista.ListaDoblementeEnlazada;
 import ar.edu.uns.cs.ed.tdas.tdalista.PositionList;
 
@@ -39,13 +41,16 @@ public class GrafoNDListaAdyacente<V,E> implements Graph<V,E> {
         Vertice<V,E> n = checkVertex(v);
         Arco<E,V> a= checkEdge(e);
         Vertex<V> result= null;
+        if(a.getAdyacente1()!= n && a.getAdyacente2()!= n){
+            throw new InvalidEdgeException("se intento hacer opposite con un arco invalido");
+        }
         if(a.getAdyacente1()== n){
             result= a.getAdyacente2();
         }
         if(a.getAdyacente2()== n){
             result = a.getAdyacente1();
         }
-        return null;
+        return result;
 
     }
 
@@ -100,16 +105,18 @@ public class GrafoNDListaAdyacente<V,E> implements Graph<V,E> {
 
     public V removeVertex(Vertex<V> v) {
         Vertice<V,E> v1= checkVertex(v);
-        V e= v1.element();
-        listaDeVertices.remove(v1.getPositionInLista());
-        for(Position<Edge<E>> posEdge : listaDeArcos.positions()){
-            for(Edge<E> edge2 : v1.getArcosAdyacentes()){
-                if(posEdge.element()==edge2){
-                    listaDeArcos.remove(posEdge);
+        V e = null;
+        if(!listaDeVertices.isEmpty()){
+            e= v1.element();
+            listaDeVertices.remove(v1.getPositionInLista());
+            for(Edge<E> edges: v1.getArcosAdyacentes()){
+                Arco<E,V> aDev1 = (Arco<E,V>) edges;
+                if(!listaDeArcos.isEmpty()){
+                    listaDeArcos.remove(aDev1.getPosisionLista());
                 }
             }
         }
-        return e;
+        return e; 
     }
 
     public E removeEdge(Edge<E> e) {
@@ -117,11 +124,9 @@ public class GrafoNDListaAdyacente<V,E> implements Graph<V,E> {
         E elem= a.element();
         Vertice<V,E> v1= a.getAdyacente1();
         Vertice<V,E> v2= a.getAdyacente2();
-        for(Position<Edge<E>> posEdge : listaDeArcos.positions()){
-            if(posEdge.element()==a){
-                listaDeArcos.remove(posEdge);
-            }
-        }
+
+        listaDeArcos.remove(a.getPosisionLista());
+
         for(Position<Edge<E>> posEdge : v1.getArcosAdyacentes().positions()){
             if(posEdge.element()==a){
                 v1.getArcosAdyacentes().remove(posEdge);
@@ -140,6 +145,9 @@ public class GrafoNDListaAdyacente<V,E> implements Graph<V,E> {
     //metodos privados
     private Vertice<V, E> checkVertex(Vertex<V> v) {
 		Vertice<V, E> resultado = null;
+        if(v==null){
+            throw new InvalidVertexException(" V es nulo");
+        }
 		if( listaDeVertices.size() == 0) { throw new InvalidPositionException(null); }
 		try {
 			resultado = (Vertice<V, E>)v;
@@ -151,6 +159,9 @@ public class GrafoNDListaAdyacente<V,E> implements Graph<V,E> {
     
     private Arco<E, V> checkEdge(Edge<E> e) {
 		Arco<E, V> resultado = null;
+        if(e==null){
+            throw new InvalidEdgeException(" e es nulo");
+        }
 		if( listaDeArcos.size() == 0) { throw new InvalidPositionException(null); }
 		try {
 			resultado = (Arco<E,V>) e;
