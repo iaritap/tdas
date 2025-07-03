@@ -119,6 +119,9 @@ public class BTTDA<E> implements BinaryTree<E> {
 
     public Position<E> addFirstChild(Position<E> p, E e) {
         BTNodo<E> n= checkPosition(p);
+        if(isEmpty()){
+            throw new InvalidPositionException("se intento addafter con arbol vacio.");
+        }
         BTNodo<E> hijo= null;
         if(n.getHijoDere()== null && n.getHijoIzq()==null){
             hijo = new BTNodo<E>(e, null, null, null);
@@ -132,6 +135,9 @@ public class BTTDA<E> implements BinaryTree<E> {
     @Override
     public Position<E> addLastChild(Position<E> p, E e) {
         BTNodo<E> n= checkPosition(p);
+        if(isEmpty()){
+            throw new InvalidPositionException("se intento addafter con arbol vacio.");
+        }
         BTNodo<E> hijo= null;
         if(n.getHijoDere()== null){
             hijo = new BTNodo<E>(e, null, null, null);
@@ -144,12 +150,15 @@ public class BTTDA<E> implements BinaryTree<E> {
     public Position<E> addBefore(Position<E> p, Position<E> rb, E e) {
         BTNodo<E> padre = checkPosition(p);
 		BTNodo<E> hermano = checkPosition(rb);
-		if(hermano.getPadre()!= padre ) {throw new InvalidPositionException("El padre no es el verdadero padre");}
+        if(isEmpty()){
+            throw new InvalidPositionException("se intento addafter con arbol vacio.");
+        }
+		if(hermano.getPadre()!= padre ) {
+            throw new InvalidPositionException("El padre no es el verdadero padre");}
 		BTNodo<E> nuevo= null;
-		if(padre.getHijoIzq()== hermano && padre.getHijoDere()==null){
+		if(padre.getHijoIzq()== null && padre.getHijoDere()==hermano){
             nuevo = new BTNodo<E>(e, null, null, padre);
-            padre.setHijoDere(hermano);
-            padre.setHijoIzq(nuevo);
+            padre.setHijoDere(nuevo);
             size++;
         }
 		return nuevo;
@@ -158,7 +167,11 @@ public class BTTDA<E> implements BinaryTree<E> {
     public Position<E> addAfter(Position<E> p, Position<E> lb, E e) {
         BTNodo<E> padre = checkPosition(p);
 		BTNodo<E> hermano = checkPosition(lb);
-		if(hermano.getPadre()!= padre ) {throw new InvalidPositionException("El padre no es el verdadero padre");}
+        if(isEmpty()){
+            throw new InvalidPositionException("se intento addafter con arbol vacio.");
+        }
+		if(hermano.getPadre()!= padre ) {
+            throw new InvalidPositionException("El padre no es el verdadero padre");}
 		BTNodo<E> nuevo= null;
 		if(padre.getHijoIzq()== hermano && padre.getHijoDere()==null){
             nuevo = new BTNodo<E>(e, null, null, padre);
@@ -183,71 +196,35 @@ public class BTTDA<E> implements BinaryTree<E> {
 
     public void removeInternalNode(Position<E> p) {
         BTNodo<E> n= checkPosition(p);
-        if(isInternal(n)){
-            if(n.getPadre().getHijoDere()== n){
-                n.getPadre().setHijoDere(null);
-                if(n.getHijoDere()== null){
-                    n.getPadre().setHijoDere(n.getHijoIzq());
-                    n.getHijoIzq().setPadre(n.getPadre());
-                }
-                else{
-                    if(n.getHijoIzq().getHijoDere()== null && n.getHijoIzq().getHijoIzq()!= null){
-                        n.getHijoIzq().setHijoDere(n.getHijoDere());
-                        n.getPadre().setHijoDere(n.getHijoIzq());
-                        n.getHijoIzq().setPadre(n.getPadre());
-                    }
-                    if(n.getHijoIzq().getHijoDere()== null && n.getHijoIzq().getHijoIzq()== null){
-                        n.getHijoIzq().setHijoIzq(n.getHijoDere());
-                        n.getPadre().setHijoDere(n.getHijoIzq());
-                        n.getHijoIzq().setPadre(n.getPadre());
-                    }
-                    if(n.getHijoIzq().getHijoDere()!= null && n.getHijoIzq().getHijoIzq()!= null){
-                        n.getPadre().setHijoDere(n.getHijoIzq());
-                        n.getHijoIzq().setPadre(n.getPadre());
-                        PositionList<Position<E>> listaPrePosHIdeN= new ListaDoblementeEnlazada<>();
-                        preordenPositions(n.getHijoIzq(), listaPrePosHIdeN);
-                        BTNodo<E> ultiBtNodo = (BTNodo<E>) listaPrePosHIdeN.last();
-                        ultiBtNodo.setHijoIzq(n.getHijoDere());
-                    }
-                }
-
+        if(isEmpty()){
+            throw new InvalidPositionException("se intento removeinternal con arbol vacio");
+        }
+        if(!isInternal(n)){
+            throw new InvalidPositionException("se intento removeinternal sin ser nodo interno");
+        }
+        if(isRoot(n)){
+            if(size!=2){
+                throw new InvalidPositionException("se intento removeinternal con root sin un unico hijo");
             }
-            else{
-                n.getPadre().setHijoIzq(null);
-                if(n.getHijoDere()== null){
-                    n.getPadre().setHijoIzq(n.getHijoIzq());
-                    n.getHijoIzq().setPadre(n.getPadre());
+            if(size==2){
+                if(n.getHijoDere()!= null){
+                    root=n.getHijoDere();
                 }
-                else{
-                    if(n.getHijoIzq().getHijoDere()== null && n.getHijoIzq().getHijoIzq()!= null){
-                        n.getHijoIzq().setHijoDere(n.getHijoDere());
-                        n.getPadre().setHijoIzq(n.getHijoIzq());
-                        n.getHijoIzq().setPadre(n.getPadre());
-                    }
-                    if(n.getHijoIzq().getHijoDere()== null && n.getHijoIzq().getHijoIzq()== null){
-                        n.getHijoIzq().setHijoIzq(n.getHijoDere());
-                        n.getPadre().setHijoIzq(n.getHijoIzq());
-                        n.getHijoIzq().setPadre(n.getPadre());
-                    }
-                    if(n.getHijoIzq().getHijoDere()!= null && n.getHijoIzq().getHijoIzq()!= null){
-                        n.getPadre().setHijoIzq(n.getHijoIzq());
-                        n.getHijoIzq().setPadre(n.getPadre());
-                        PositionList<Position<E>> listaPrePosHIdeN= new ListaDoblementeEnlazada<>();
-                        preordenPositions(n.getHijoIzq(), listaPrePosHIdeN);
-                        BTNodo<E> ultiBtNodo = (BTNodo<E>) listaPrePosHIdeN.last();
-                        ultiBtNodo.setHijoIzq(n.getHijoDere());
-                    }
+                if(n.getHijoIzq()!= null){
+                    root=n.getHijoIzq();
                 }
-
+                n.setPadre(null);
+                size--;
             }
+        }
+        else{
             
         }
     }
 
-    @Override
     public void removeNode(Position<E> p) {
         BTNodo<E> n= checkPosition(p);
-        if(n.getHijoDere()==null && n.getHijoIzq()==null){
+        if(isExternal(n)){
             removeExternalNode(n);
         }
         else{
@@ -268,7 +245,6 @@ public class BTTDA<E> implements BinaryTree<E> {
         }
     }
 
-    @Override
     public Position<E> right(Position<E> v) {
         BTNodo<E> n= checkPosition(v);
         if(n.getHijoDere()==null){
@@ -333,13 +309,27 @@ public class BTTDA<E> implements BinaryTree<E> {
         }
         else{
             if(!T1.isEmpty()){
-                BTNodo<E> raizT1 =(BTNodo<E>) T1.root();
-                n.setHijoIzq(raizT1);
+                BTNodo<E> raizclon= new BTNodo<E>(T1.root().element(), null, null, null);
+                BTNodo<E> raizOri=(BTNodo<E>) T1.root();
+                if(T1.hasLeft(raizOri)){
+                    preordenClonT(raizOri.getHijoIzq(), raizclon, T1, true);
+                }
+                if(T1.hasRight(raizOri)){
+                    preordenClonT(raizOri.getHijoDere(), raizclon, T1, false);
+                }
+                n.setHijoIzq(raizclon);
                 size+= T1.size();
             }
             if(!T2.isEmpty()){
-                BTNodo<E> raizT2 =(BTNodo<E>) T2.root();
-                n.setHijoIzq(raizT2);
+                BTNodo<E> raizclon2= new BTNodo<E>(T2.root().element(), null, null, null);
+                BTNodo<E> raizOr=(BTNodo<E>) T2.root();
+                if(T1.hasLeft(raizOr)){
+                    preordenClonT(raizOr.getHijoIzq(), raizclon2, T2, true);
+                }
+                if(T1.hasRight(raizOr)){
+                    preordenClonT(raizOr.getHijoDere(), raizclon2, T2, false);
+                }
+                n.setHijoIzq(raizclon2);
                 size+= T2.size();
             }
         }
@@ -364,6 +354,23 @@ public class BTTDA<E> implements BinaryTree<E> {
             preordenPositions(nodo.getHijoIzq(), lista);
             preordenPositions(nodo.getHijoDere(), lista);
         }
+	}
+
+    protected void preordenClonT( BTNodo<E> hijoOriginal, BTNodo<E> padreclon,BinaryTree<E> t, boolean esZurdo ) {
+        BTNodo<E> hijoclonado= new BTNodo<E>(hijoOriginal.element(), null, null, padreclon);
+        if(esZurdo){
+            padreclon.setHijoIzq(hijoclonado);
+        }
+        else{
+            padreclon.setHijoDere(hijoclonado);
+        }
+
+        if(t.hasLeft(hijoOriginal)){
+            preordenClonT(hijoOriginal.getHijoIzq(), hijoclonado, t, true);
+        }
+        if(t.hasRight(hijoOriginal)){
+            preordenClonT(hijoOriginal.getHijoDere(), hijoclonado, t, false);
+        } 
 	}
 
     private void preordenElementos( BTNodo<E> nodo, PositionList<E> lista ) {
