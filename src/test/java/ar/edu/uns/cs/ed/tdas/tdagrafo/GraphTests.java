@@ -38,7 +38,7 @@ public class GraphTests {
 	 */
 	@Before
 	public void setUp() {
-		graph = new GrafoNDListaAdyacente<Object, Object>(); // cambiar esta línea para probar
+		graph = new GrafoNDMatrizAdyacente<Object, Object>(); // cambiar esta línea para probar
 												// distintas implementaciones
 		o1 = new Object();
 	}

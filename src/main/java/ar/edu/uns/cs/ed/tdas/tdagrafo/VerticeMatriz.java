@@ -13,13 +13,15 @@ public class VerticeMatriz<V,E> implements Vertex<V> {
     public VerticeMatriz( V elemento ) {
 		element = elemento;
 	    listaAdyacencia = new ListaDoblementeEnlazada<Edge<E>>();
+        indiceMatriz=-1;
+        posicion=null;
 	}
 
     public V element() {
         return element;
     }
 
-    public void setRotulo(V e){
+    public void setelement(V e){
         element= e;
     }
 
@@ -39,7 +41,7 @@ public class VerticeMatriz<V,E> implements Vertex<V> {
 		return posicion;
 	}
 
-    public void agregarAdyacente(Arco<E, V> arco) {
+    public void agregarAdyacente(ArcoMatriz<E, V> arco) {
 		listaAdyacencia.addLast(arco);
 	}
 

@@ -27,14 +27,7 @@ public class GrafoNDListaAdyacente<V,E> implements Graph<V,E> {
 
     public Iterable<Edge<E>> incidentEdges(Vertex<V> v) {
         Vertice<V,E> n= checkVertex(v);
-        PositionList<Edge<E>> ListaArcosIncidentesDeV = new ListaDoblementeEnlazada<>();
-        for(Edge<E> e: listaDeArcos){
-            Arco<E,V> a= (Arco<E,V>) e;
-            if(a.getAdyacente1()== n || a.getAdyacente2()==n){
-                ListaArcosIncidentesDeV.addLast(e);
-            }
-        }
-        return ListaArcosIncidentesDeV;
+        return n.getArcosAdyacentes();
     }
 
     public Vertex<V> opposite(Vertex<V> v, Edge<E> e) {
@@ -81,6 +74,13 @@ public class GrafoNDListaAdyacente<V,E> implements Graph<V,E> {
         Vertice<V,E> v1= checkVertex(v);
         V rotuloviejo= v1.element();
         v1.setRotulo(x);
+        return rotuloviejo;
+    }
+
+    public E replace(Edge<E> e, E x) {
+        Arco<E,V> a= checkEdge(e);
+        E rotuloviejo= a.element();
+        a.setElem(x);
         return rotuloviejo;
     }
 
